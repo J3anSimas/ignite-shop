@@ -1,16 +1,14 @@
 import type { AppProps } from 'next/app'
-import { globalStyles } from '../styles/global'
+import '../styles/global.css'
 import logoImg from '../assets/logo.svg'
-import { Container, Header } from '../styles/pages/app'
 import Image from 'next/image'
-globalStyles()
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Container>
-      <Header>
+    <div className="flex bg-red-500 flex-col items-start min-h-screen justify-center">
+      <header className="py-8 w-full max-w-[1180px] my-0 mx-auto">
         <Image src={logoImg} alt="" />
-      </Header>
+      </header>
       <Component {...pageProps} />
-    </Container>
+    </div>
   )
 }
