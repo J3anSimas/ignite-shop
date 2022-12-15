@@ -118,8 +118,11 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const productsResponse = await stripe.products.list()
+  const ids = productsResponse.data.map((product) => {
+    return { params: { id: product.id } }
+  })
   return {
-    paths: [],
+    paths: ids,
     fallback: true
   }
 }
