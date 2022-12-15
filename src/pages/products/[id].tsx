@@ -1,3 +1,7 @@
+import { useRouter } from 'next/router'
+
 export default function Product(): JSX.Element {
-  return <div>first</div>
+  const { query } = useRouter()
+
+  return <div>{query.id}</div>
 }
