@@ -1,4 +1,5 @@
 import Image, { StaticImageData } from 'next/image'
+import Link from 'next/link'
 
 import { priceFormatter } from '../../../utils/formatter'
 type TProductCardProps = {
@@ -15,9 +16,10 @@ export default function ProductCard({
   price
 }: TProductCardProps): JSX.Element {
   return (
-    <a
+    <Link
       className="bg-gradient-to-b from-[#1ea483] to-[#7465d4] h-full rounded-lg p-1 relative flex flex-col items-center justify-center overflow-hidden group w-full"
       href={`/products/${id}`}
+      prefetch={false}
     >
       <Image
         className="object-cover"
@@ -32,6 +34,6 @@ export default function ProductCard({
           {priceFormatter.format(price)}
         </span>
       </footer>
-    </a>
+    </Link>
   )
 }
