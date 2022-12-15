@@ -60,7 +60,6 @@ export const getServerSideProps: GetServerSideProps<
   const customerDetails = response.customer_details
   const lineItems = response.line_items as Stripe.ApiList<Stripe.LineItem>
   const product = lineItems.data[0].price?.product as Stripe.Product
-  console.log(product)
 
   return {
     props: {
