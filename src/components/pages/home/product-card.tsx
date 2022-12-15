@@ -19,6 +19,7 @@ export default function ProductCard({
     <Link
       className="bg-gradient-to-b from-[#1ea483] to-[#7465d4] h-full rounded-lg p-1 relative flex flex-col items-center justify-center overflow-hidden group w-full"
       href={`/products/${id}`}
+      prefetch={false}
     >
       <Image
         className="object-cover"
