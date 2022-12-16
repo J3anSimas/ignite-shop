@@ -12,6 +12,7 @@ type THomeProps = {
     name: string
     imageUrl: string
     price: number
+    priceId: string
   }[]
 }
 
@@ -37,6 +38,7 @@ export default function Home({ products }: THomeProps) {
               id={product.id}
               name={product.name}
               price={product.price}
+              priceId={product.priceId}
               imageUrl={product.imageUrl}
             />
           </span>
@@ -58,7 +60,8 @@ export const getStaticProps: GetStaticProps = async () => {
       id: product.id,
       name: product.name,
       imageUrl: product.images[0],
-      price: price.unit_amount ? price.unit_amount / 100 : 0
+      price: price.unit_amount ? price.unit_amount / 100 : 0,
+      priceId: price.id
     }
   })
   return {

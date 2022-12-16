@@ -11,8 +11,9 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery, StringifyOptions } from 'querystring'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import Stripe from 'stripe'
+import { CartContext } from '../../contexts/cart'
 import { stripe } from '../../lib/stripe'
 import { priceFormatter } from '../../utils/formatter'
 
@@ -22,7 +23,7 @@ type TProductProps = {
   name: string
   price: number
   description: string
-  defaultPriceId: string
+  priceId: string
 }
 export default function Product({
   id,
@@ -30,25 +31,29 @@ export default function Product({
   imageUrl,
   description,
   price,
-  defaultPriceId
+  priceId
 }: TProductProps): JSX.Element {
+  const { addProduct } = useContext(CartContext)
   const [isRedirectingToCheckoutPage, setIsRedirectingToCheckoutPage] =
     useState(false)
   const { isFallback } = useRouter()
 
-  async function handleBuyProduct(): Promise<void> {
-    setIsRedirectingToCheckoutPage(true)
-    try {
-      const response = await axios.post('/api/checkout', {
-        priceId: defaultPriceId
-      })
-
-      window.location.href = response.data.checkoutUrl
-    } catch (error) {
-      alert('Falha ao redirecionar à página de checkout')
-      setIsRedirectingToCheckoutPage(false)
-    }
+  function handleAddItemToCart(): void {
+    addProduct({ name, price, priceId, imageUrl })
   }
+  // async function handleBuyProduct(): Promise<void> {
+  //   setIsRedirectingToCheckoutPage(true)
+  //   try {
+  //     const response = await axios.post('/api/checkout', {
+  //       priceId: defaultPriceId
+  //     })
+
+  //     window.location.href = response.data.checkoutUrl
+  //   } catch (error) {
+  //     alert('Falha ao redirecionar à página de checkout')
+  //     setIsRedirectingToCheckoutPage(false)
+  //   }
+  // }
   return (
     <>
       <Head>
@@ -84,10 +89,10 @@ export default function Product({
           )}
           <button
             className="text-md text-white w-full py-5 bg-green-500 font-bold flex justify-center rounded-lg mt-auto hover:bg-green-300 disabled:cursor-not-allowed disabled:opacity-60"
-            onClick={handleBuyProduct}
+            onClick={handleAddItemToCart}
             disabled={isRedirectingToCheckoutPage}
           >
-            Comprar agora
+            Colocar na sacola
           </button>
         </div>
       </main>
@@ -110,7 +115,7 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
       name: response.name,
       price: price.unit_amount ? price.unit_amount / 100 : 0,
       description: response.description,
-      defaultPriceId: price.id
+      priceId: price.id
     },
     revalidate: 300
   }
