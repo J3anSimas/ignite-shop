@@ -1,17 +1,16 @@
 import type { AppProps } from 'next/app'
 import '../styles/global.css'
-import logoImg from '../assets/logo.svg'
 import Image from 'next/image'
 import Link from 'next/link'
+import { CartProvider } from '../contexts/cart'
+import Header from '../components/header'
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <div className="flex bg-red-500 flex-col items-start min-h-screen justify-center">
-      <header className="py-8 w-full max-w-[1180px] my-0 mx-auto">
-        <Link href="/">
-          <Image src={logoImg} alt="" />
-        </Link>
-      </header>
-      <Component {...pageProps} />
-    </div>
+    <CartProvider>
+      <div className="flex bg-red-500 flex-col items-start min-h-screen justify-center">
+        <Header />
+        <Component {...pageProps} />
+      </div>
+    </CartProvider>
   )
 }
