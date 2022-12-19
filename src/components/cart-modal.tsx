@@ -1,11 +1,15 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import axios from 'axios'
 import Image from 'next/image'
 import { X } from 'phosphor-react'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { CartContext } from '../contexts/cart'
 import { priceFormatter } from '../utils/formatter'
 export default function CartModal(): JSX.Element {
-  const { products, removeProduct } = useContext(CartContext)
+  const { products, removeProduct, organizeCartToCheckout } =
+    useContext(CartContext)
+  const [isRedirectingToCheckoutPage, setIsRedirectingToCheckoutPage] =
+    useState(false)
   const totalValue = products.reduce((acc, product) => {
     return acc + product.price
   }, 0)
@@ -13,6 +17,24 @@ export default function CartModal(): JSX.Element {
   function handleRemoveProduct(priceId: string): void {
     removeProduct(priceId)
   }
+
+  async function handleFinishBuy(): Promise<void> {
+    setIsRedirectingToCheckoutPage(true)
+    const organizedItems = organizeCartToCheckout()
+    console.log(organizedItems)
+
+    try {
+      const response = await axios.post('/api/checkout', {
+        listItems: organizeCartToCheckout()
+      })
+
+      window.location.href = response.data.checkoutUrl
+    } catch (error) {
+      alert('Falha ao redirecionar à página de checkout')
+      setIsRedirectingToCheckoutPage(false)
+    }
+  }
+
   return (
     <Dialog.Portal>
       <Dialog.Content className="flex flex-col p-12 pt-20 absolute top-0 right-0 w-[30rem] h-screen bg-gray-800">
@@ -28,9 +50,9 @@ export default function CartModal(): JSX.Element {
         <Dialog.Title className="text-lg text-gray-100 font-bold">
           Sacola de compras
         </Dialog.Title>
-        <ul className="mt-8 flex flex-col gap-6">
-          {products.map((product) => (
-            <li key={product.priceId} className="flex gap-5">
+        <ul className="mt-8 flex flex-col gap-6 h-[500px] overflow-y-auto">
+          {products.map((product, index) => (
+            <li key={product.priceId + index} className="flex gap-5">
               <div className="w-[6.37rem] h-[5.8125rem] bg-gradient-to-b from-[#1EA483] to-[#7465D4] rounded-lg">
                 <Image
                   src={product.imageUrl}
@@ -65,7 +87,10 @@ export default function CartModal(): JSX.Element {
             <span className="text-md">Valor total</span>
             <span className="text-xl">{priceFormatter.format(totalValue)}</span>
           </div>
-          <button className="bg-green-500 py-6 text-white text-md font-bold rounded-lg mt-14">
+          <button
+            className="bg-green-500 py-6 text-white text-md font-bold rounded-lg mt-14"
+            onClick={handleFinishBuy}
+          >
             Finalizar compra
           </button>
         </div>

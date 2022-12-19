@@ -8,7 +8,6 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <CartProvider>
       <div className="flex bg-red-500 flex-col items-start min-h-screen justify-center">
-        <Header />
         <Component {...pageProps} />
       </div>
     </CartProvider>

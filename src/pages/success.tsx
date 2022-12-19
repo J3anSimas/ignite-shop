@@ -3,35 +3,43 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import Stripe from 'stripe'
+import Header from '../components/header'
 import { stripe } from '../lib/stripe'
 
 type TSuccessProps = {
   customerName: string
-  product: {
-    name: string
+  images: {
     imageUrl: string
-  }
+  }[]
 }
 export default function Success({
   customerName,
-  product
+  images
 }: TSuccessProps): JSX.Element {
   return (
     <>
+      <Header center />
       <Head>
         <title>Compra efetuada | Ignite Shop </title>
         <meta name="robots" content="noindex" />
       </Head>
       <div className="h-[590px] flex flex-col items-center justify-center mx-auto">
-        <h1 className="text-2xl text-gray-100 font-bold leading-snug mb-16">
+        <div className="flex ">
+          {images.map(({ imageUrl }) => (
+            <div
+              key={imageUrl}
+              className="flex justify-center items-center w-32 h-32 ml-[-3.25rem] bg-gradient-to-b from-[#1EA483] to-[#7465D4] rounded-full mb-8 first:ml-0"
+            >
+              <Image src={imageUrl} width={114} height={106} alt="" />
+            </div>
+          ))}
+        </div>
+        <h1 className="text-2xl text-gray-100 font-bold leading-snug mt-12 mb-6">
           Compra efetuada!
         </h1>
-        <div className="flex justify-center items-center w-32 h-36 bg-gradient-to-b from-[#1EA483] to-[#7465D4] rounded-lg mb-8">
-          <Image src={product.imageUrl} width={114} height={106} alt="" />
-        </div>
-        <p className="text-gray-300 text-xl leading-snug mb-20 max-w-xl text-center">
-          Uhuul <strong className="capitalize">{customerName}</strong>, sua{' '}
-          <strong>{product.name}</strong> já está a caminho da sua casa.{' '}
+        <p className="text-gray-300 text-xl leading-snug mb-16 max-w-xl text-center">
+          Uhuul <strong className="capitalize">{customerName}</strong>, sua
+          compra de {images.length} camisas já está à caminho da sua casa.{' '}
         </p>
         <Link className="text-lg text-green-500 font-bold " href="/">
           Voltar ao catálogo
@@ -59,17 +67,20 @@ export const getServerSideProps: GetServerSideProps<
   })
   const customerDetails = response.customer_details
   const lineItems = response.line_items as Stripe.ApiList<Stripe.LineItem>
-  const product = lineItems.data[0].price?.product as Stripe.Product
+  const images = lineItems.data.map((item) => {
+    const product = item.price?.product as Stripe.Product
+    return {
+      imageUrl: product.images[0]
+    }
+  })
+  console.log(images)
 
   return {
     props: {
       customerName: customerDetails
         ? String(customerDetails.name).toLowerCase()
         : 'Customer',
-      product: {
-        name: product.name,
-        imageUrl: product.images[0]
-      }
+      images: images
     }
   }
 }

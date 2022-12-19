@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import { ParsedUrlQuery, StringifyOptions } from 'querystring'
 import { useContext, useState } from 'react'
 import Stripe from 'stripe'
+import Header from '../../components/header'
 import { CartContext } from '../../contexts/cart'
 import { stripe } from '../../lib/stripe'
 import { priceFormatter } from '../../utils/formatter'
@@ -56,6 +57,7 @@ export default function Product({
   // }
   return (
     <>
+      <Header />
       <Head>
         <title>{name} | Ignite Shop</title>
       </Head>

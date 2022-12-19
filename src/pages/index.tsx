@@ -5,6 +5,7 @@ import { stripe } from '../lib/stripe'
 import Stripe from 'stripe'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
+import Header from '../components/header'
 
 type THomeProps = {
   products: {
@@ -25,6 +26,7 @@ export default function Home({ products }: THomeProps) {
   })
   return (
     <>
+      <Header />
       <Head>
         <title>Home | Ignite Shop</title>
       </Head>
